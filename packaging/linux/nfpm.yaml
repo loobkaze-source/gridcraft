@@ -14,7 +14,7 @@ section: misc
 priority: optional
 maintainer: ${GRIDCRAFT_MAINTAINER}
 vendor: Unigreen Power Co., Ltd.
-homepage: https://getartcraft.com/apps/gridcraft
+homepage: https://unigreenpower.co.th
 license: MIT OR Apache-2.0
 description: |-
   Open-source, native spreadsheet that works the way Excel users expect.

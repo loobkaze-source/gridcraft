@@ -12,9 +12,15 @@ Third-party material
 This product bundles third-party material under its own licenses, listed below. The per-file
 list (author, source, license) is in ATTRIBUTION.md.
 
-None: every bundled asset is original to GridCraft. Builds made with craft-fonts
+- Noto Sans Thai (assets/fonts/NotoSansThai-*.ttf), Copyright 2022 The Noto Project Authors
+  (https://github.com/notofonts/thai) — SIL Open Font License 1.1. See assets/fonts/OFL-NotoSansThai.txt.
+  Added in Unigreen Sheets as the Thai interface fallback font.
+
+Every other bundled asset is original to GridCraft, except the Unigreen Sheets app icons
+(Unigreen Power Co., Ltd., see below). Builds made with craft-fonts
 (CRAFT_FONTS_DIR) embed the fonts listed in ATTRIBUTION.md under the SIL Open Font License 1.1.
 
 Unigreen Sheets is a modified version of GridCraft distributed by Unigreen Power Co., Ltd.
-Modifications: product name, app icons, colour theme and packaging metadata. The Unigreen name and
-logo are trademarks of Unigreen Power Co., Ltd. and are not licensed under MIT or Apache-2.0.
+Modifications: product name, app icons, colour theme, help and contact links, a Thai interface
+fallback font (Noto Sans Thai) and packaging metadata. The Unigreen name and logo are trademarks
+of Unigreen Power Co., Ltd. and are not licensed under MIT or Apache-2.0.

@@ -1,9 +1,10 @@
 //! Design tokens and fonts.
 //!
 //! Colours are our own, tuned to read like a modern desktop spreadsheet. Fonts come from the
-//! operating system at runtime (nothing bundled): the UI uses the platform UI font, cells use the
-//! best available match for the workbook font (Calibri/Carlito/Aptos/Arial…) with egui's built-in
-//! fonts as the last resort.
+//! operating system at runtime: the UI uses the platform UI font, cells use the best available
+//! match for the workbook font (Calibri/Carlito/Aptos/Arial…) with egui's built-in fonts as the
+//! last resort. The one bundled face is Noto Sans Thai (Unigreen Sheets), a Thai fallback for the
+//! interface families only ([`NOTO_SANS_THAI`]).
 
 use std::sync::Arc;
 
@@ -156,6 +157,12 @@ pub const CELL_ITALIC: &str = "cell-italic";
 pub const CELL_BOLD_ITALIC: &str = "cell-bold-italic";
 pub const SERIF: &str = "serif";
 pub const MONO: &str = "mono";
+
+/// Font keys of the bundled Noto Sans Thai (`assets/fonts/`, OFL-1.1), the Thai fallback of the
+/// interface families ([`UI`], [`UI_BOLD`], [`MONO`] and egui's own two). Never a primary font,
+/// and never in a cell family: cells keep the workbook's fonts.
+pub const NOTO_SANS_THAI: &str = "noto-sans-thai";
+pub const NOTO_SANS_THAI_BOLD: &str = "noto-sans-thai-bold";
 
 pub fn ui_font(size: f32) -> FontId {
     FontId::new(size, FontFamily::Name(UI.into()))
@@ -436,6 +443,7 @@ pub fn font_definitions_with(language: crate::i18n::Language, used: &[String]) -
             }
         }
     }
+    add_ui_thai(&mut fonts, &fallback);
     // Default proportional text in widgets uses the UI font.
     if let Some(ui) = fonts.families.get(&FontFamily::Name(UI.into())).cloned() {
         fonts.families.insert(FontFamily::Proportional, ui);
@@ -445,6 +453,28 @@ pub fn font_definitions_with(language: crate::i18n::Language, used: &[String]) -
     bound.retain(|f| fonts.families.get(&FontFamily::Name(f.as_str().into())).is_some_and(|c| !c.is_empty()));
     crate::fonts::set_bound(bound);
     fonts
+}
+
+/// Registers the bundled Noto Sans Thai and puts it in the interface chains, behind their Latin
+/// faces (and the cell face) and ahead of the system script faces, so interface Thai looks the
+/// same everywhere, the web build included. The bold UI family gets the bold face first.
+fn add_ui_thai(fonts: &mut FontDefinitions, fallback: &[String]) {
+    let regular = include_bytes!("../../../assets/fonts/NotoSansThai-Regular.ttf");
+    let bold = include_bytes!("../../../assets/fonts/NotoSansThai-Bold.ttf");
+    fonts.font_data.insert(NOTO_SANS_THAI.into(), Arc::new(FontData::from_static(regular)));
+    fonts.font_data.insert(NOTO_SANS_THAI_BOLD.into(), Arc::new(FontData::from_static(bold)));
+    for (role, keys) in [(UI, &[NOTO_SANS_THAI][..]), (UI_BOLD, &[NOTO_SANS_THAI_BOLD, NOTO_SANS_THAI][..]), (MONO, &[NOTO_SANS_THAI][..])] {
+        if let Some(chain) = fonts.families.get_mut(&FontFamily::Name(role.into())) {
+            let at = chain.iter().position(|k| fallback.contains(k)).unwrap_or(chain.len());
+            for (i, key) in keys.iter().enumerate() {
+                chain.insert(at + i, key.to_string());
+            }
+        }
+    }
+    // egui's own monospace family (not used by the app's text styles): a late fallback.
+    if let Some(chain) = fonts.families.get_mut(&FontFamily::Monospace) {
+        chain.push(NOTO_SANS_THAI.into());
+    }
 }
 
 /// Loads the system non-Latin fallback faces (one file per script family) and returns their keys so
@@ -814,6 +844,47 @@ mod tests {
             let first_fb = chain.iter().position(|k| fb.contains(k)).unwrap_or(chain.len());
             assert!(at.unwrap_or(usize::MAX) < first_fb, "{family:?}: cell face must precede the script faces");
         }
+    }
+
+    #[test]
+    fn bundled_thai_is_an_interface_fallback_only() {
+        // Noto Sans Thai (Unigreen Sheets) backs the interface families, never as their first
+        // face and ahead of the system script faces; cell families keep the workbook's fonts.
+        let fonts = font_definitions();
+        let fb: Vec<String> = fallback_faces(HanOrder::Chinese).into_iter().map(|(k, _)| k.to_string()).collect();
+        for family in [
+            FontFamily::Proportional,
+            FontFamily::Monospace,
+            FontFamily::Name(UI.into()),
+            FontFamily::Name(UI_BOLD.into()),
+            FontFamily::Name(MONO.into()),
+        ] {
+            let chain = fonts.families.get(&family).cloned().unwrap_or_default();
+            let at = chain.iter().position(|k| k == NOTO_SANS_THAI);
+            assert!(at.is_some_and(|i| i > 0), "{family:?}: Noto Sans Thai must be a fallback: {chain:?}");
+            let first_fb = chain.iter().position(|k| fb.contains(k)).unwrap_or(chain.len());
+            assert!(at.unwrap_or(usize::MAX) < first_fb, "{family:?}: bundled Thai must precede the system script faces");
+        }
+        let bold = fonts.families.get(&FontFamily::Name(UI_BOLD.into())).cloned().unwrap_or_default();
+        let (b, r) = (bold.iter().position(|k| k == NOTO_SANS_THAI_BOLD), bold.iter().position(|k| k == NOTO_SANS_THAI));
+        assert!(matches!((b, r), (Some(b), Some(r)) if b < r), "ui-bold takes the bold Thai face first: {bold:?}");
+        for role in [CELL, CELL_BOLD, CELL_ITALIC, CELL_BOLD_ITALIC, SERIF] {
+            let chain = fonts.families.get(&FontFamily::Name(role.into())).cloned().unwrap_or_default();
+            assert!(!chain.iter().any(|k| k.starts_with(NOTO_SANS_THAI)), "{role} must not carry the interface Thai font");
+        }
+        // And it draws Thai with real glyphs, whatever is installed.
+        let ctx = egui::Context::default();
+        ctx.set_fonts(fonts);
+        let mut out = ctx.run_ui(egui::RawInput::default(), |_ui| {});
+        out.textures_delta.clear();
+        let glyphs = |text: &str| {
+            let font = FontId::new(14.0, FontFamily::Name(UI.into()));
+            let galley = ctx.fonts_mut(|f| f.layout_no_wrap(text.to_owned(), font.clone(), Color32::BLACK));
+            galley.rows.iter().flat_map(|r| r.glyphs.iter().map(|g| g.uv_rect)).collect::<Vec<_>>()
+        };
+        let tofu = glyphs("\u{25FB}");
+        let thai = glyphs("ภาษาไทย");
+        assert!(!thai.is_empty() && thai.iter().all(|g| !tofu.contains(g)), "Thai renders as tofu in the UI font");
     }
 
     #[test]

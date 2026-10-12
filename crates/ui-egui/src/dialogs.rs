@@ -1329,8 +1329,10 @@ fn about(ui: &mut egui::Ui, d: &mut Dialog) {
             ui.add_space(4.0);
             ui.label("A clean-room, open-source, Rust-native spreadsheet.");
             ui.label("Unigreen Sheets, based on GridCraft by the ArtCraft team and community.");
-            ui.hyperlink_to("getartcraft.com/apps/gridcraft", "https://getartcraft.com/apps/gridcraft");
-            ui.hyperlink_to("Join the ArtCraft Discord", "https://discord.gg/artcraft");
+            ui.hyperlink_to("Unigreen Sheets Website", "https://unigreenpower.co.th").on_hover_text("unigreenpower.co.th");
+            ui.hyperlink_to("Unigreen Sheets on GitHub", "https://github.com/loobkaze-source/gridcraft");
+            ui.hyperlink_to("Contact Unigreen on LINE", "https://line.me/R/ti/p/@unigreen.power")
+                .on_hover_text("Contact Unigreen on LINE (@unigreen.power)");
         }
     }
 }
