@@ -72,7 +72,7 @@ jobs:
         run: |
           # Name the downloads after the Unigreen product, not the upstream package.
           for f in artifacts/*; do
-            b=$(basename "$f"); n="${b/#__APP__-cli-/__SLUG__-cli-}"; n="${n/#__APP__-/__SLUG__-}"
+            b=$(basename "$f"); n="${b/#gridcraft-cli-/unigreen-sheets-cli-}"; n="${n/#gridcraft-/unigreen-sheets-}"
             [ "$n" = "$b" ] || mv "$f" "artifacts/$n"
           done
           VERSION=$(awk '/^\[workspace.package\]/{p=1;next} /^\[/{p=0} p && /^version *=/{gsub(/[" ]/,"",$0); split($0,a,"="); print a[2]; exit}' Cargo.toml)
