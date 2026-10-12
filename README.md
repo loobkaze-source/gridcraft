@@ -1,11 +1,15 @@
-<p align="center">
-  <a href="https://getartcraft.com/">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="docs/brand/artcraft-logo-white.svg">
-      <img alt="ArtCraft" src="docs/brand/artcraft-logo.svg" width="200">
-    </picture>
-  </a>
-</p>
+# Unigreen Sheets
+
+Unigreen Sheets is Unigreen Power's distribution of [GridCraft](https://github.com/storytold/gridcraft),
+an open-source, clean-room reimplementation of Microsoft Excel, rebuilt in pure Rust.
+Based on GridCraft by the ArtCraft team.
+
+> [!NOTE]
+> **Upstream.** The rest of this README is upstream's GridCraft README, kept unchanged. Unigreen
+> Sheets changes only the product name, app icons, colour theme and packaging metadata; see
+> [NOTICE](NOTICE).
+
+---
 
 <h1 align="center">GridCraft</h1>
 
@@ -339,6 +343,5 @@ Forks and modified versions must remove them.
 <br>
 
 <p align="center">
-  <a href="https://getartcraft.com/"><img alt="ArtCraft" src="docs/brand/artcraft-mark.svg" width="28"></a><br>
   <sub>Made by the <a href="https://getartcraft.com/">ArtCraft</a> team and community.</sub>
 </p>

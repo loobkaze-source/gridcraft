@@ -5,14 +5,14 @@
   <id>ai.storyteller.gridcraft</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT OR Apache-2.0</project_license>
-  <name>GridCraft</name>
+  <name>Unigreen Sheets</name>
   <summary>Calculate, analyse and chart data in workbooks</summary>
   <developer id="ai.storyteller">
-    <name>Learning Machines LLC</name>
+    <name>Unigreen Power Co., Ltd.</name>
   </developer>
   <description>
     <p>
-      GridCraft is an open-source, native spreadsheet. It opens and saves .xlsx workbooks and
+      Unigreen Sheets is an open-source, native spreadsheet. It opens and saves .xlsx workbooks and
       CSV/TSV files, evaluates hundreds of worksheet functions, and formats, sorts, filters and
       charts your data.
     </p>
@@ -41,8 +41,8 @@
   </keywords>
   <!-- Proposed app colour (GridCraft green #1f9d55 / ink #147a40); see assets/app-icon/README.md. -->
   <branding>
-    <color type="primary" scheme_preference="light">#a7e3bf</color>
-    <color type="primary" scheme_preference="dark">#147a40</color>
+    <color type="primary" scheme_preference="light">#34d399</color>
+    <color type="primary" scheme_preference="dark">#0d1a12</color>
   </branding>
   <requires>
     <display_length compare="ge">760</display_length>

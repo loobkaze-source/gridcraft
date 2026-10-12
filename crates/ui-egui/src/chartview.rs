@@ -441,7 +441,13 @@ fn paint_slicers(app: &SheetApp, p: &Painter, geo: &Geo, wb: &Workbook, si: usiz
         p.rect_filled(lay.header, radius, tk.accent_soft);
         p.rect_filled(Rect::from_min_max(pos2(lay.header.left(), lay.header.bottom() - radius), lay.header.max), 0.0, tk.accent_soft);
         let cap = if sl.caption.is_empty() { sl.column.clone() } else { sl.caption.clone() };
-        p.text(lay.header.left_center() + vec2(8.0 * geo.z, 0.0), Align2::LEFT_CENTER, cap, theme::ui_bold(12.5 * geo.z), tk.accent_dark);
+        p.text(
+            lay.header.left_center() + vec2(8.0 * geo.z, 0.0),
+            Align2::LEFT_CENTER,
+            cap,
+            theme::ui_bold(12.5 * geo.z),
+            if tk.dark { tk.accent } else { tk.accent_dark },
+        );
         // Clear-filter button (tinted when a filter is active).
         let filtered = sl.selected.is_some();
         if let Some(icon) = crate::icons::from_name("filter") {
@@ -452,7 +458,7 @@ fn paint_slicers(app: &SheetApp, p: &Painter, geo: &Geo, wb: &Workbook, si: usiz
             if !r.contains(tr.left_top()) {
                 continue; // overflowed the card; skip (no scroll yet)
             }
-            let (fill, fg) = if *on { (tk.accent, Color32::WHITE) } else { (tk.hover, tk.text_dim) };
+            let (fill, fg) = if *on { (tk.accent, tk.on_accent()) } else { (tk.hover, tk.text_dim) };
             p.rect_filled(*tr, 3.0 * geo.z, fill);
             let cp = p.with_clip_rect(tr.intersect(p.clip_rect()));
             cp.text(tr.left_center() + vec2(6.0 * geo.z, 0.0), Align2::LEFT_CENTER, val, theme::ui_font(12.0 * geo.z), fg);

@@ -127,7 +127,7 @@ fn name_box(app: &mut SheetApp, ui: &mut egui::Ui, t: &Tokens) {
                     app.run("formulas.defineName", json!({"name": target}))
                 };
                 if let Err(e) = r {
-                    app.message = Some(("GridCraft".into(), crate::clean_error(&e)));
+                    app.message = Some(("Unigreen Sheets".into(), crate::clean_error(&e)));
                 }
                 app.grid.ensure_visible = true;
             }
@@ -333,14 +333,15 @@ pub fn editor_widget(app: &mut SheetApp, ui: &mut egui::Ui, id: egui::Id, font: 
         && let Some(rest) = full.get(ed.text.len()..)
     {
         let pos = resp.rect.left_top() + egui::vec2(output.galley.rect.width(), 0.0);
+        let t = Tokens::get(ui.ctx());
         let g = ui.painter().layout_no_wrap(
             rest.to_string(),
             output.galley.job.sections.first().map(|s| s.format.font_id.clone()).unwrap_or_default(),
-            Color32::WHITE,
+            t.on_accent(),
         );
         let r = egui::Rect::from_min_size(pos, g.size());
-        ui.painter().rect_filled(r, 0.0, Color32::from_rgb(0x2E, 0x6F, 0xD8));
-        ui.painter().galley(pos, g, Color32::WHITE);
+        ui.painter().rect_filled(r, 0.0, t.accent);
+        ui.painter().galley(pos, g, t.on_accent());
     }
     // Autocomplete list and argument hint under the editor.
     if mine && ui.is_rect_visible(resp.rect) && (!ed.autocomplete.is_empty() || ed.current_function().is_some()) {

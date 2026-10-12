@@ -682,7 +682,7 @@ impl Dialog {
             "commandSearch" => Dialog::custom("commandSearch", "Search Commands", json!({})),
             "agents" => Dialog::custom("agents", "Agent Control", json!({})),
             "about" => {
-                let mut d = Dialog::custom("about", "About GridCraft", json!({}));
+                let mut d = Dialog::custom("about", "About Unigreen Sheets", json!({}));
                 d.tab = match p("tab").as_str() {
                     Some(t @ ("Contributors" | "Models")) => t.to_string(),
                     _ => "About".into(),
@@ -784,7 +784,7 @@ impl Dialog {
             "pickList" => Dialog::custom("pickList", "Pick From List", json!({})),
             "saveCopy" => Dialog::custom("saveCopy", "Save a Copy", json!({"format": p("format")})),
             "saveChanges" => Dialog::custom("saveChanges", "Save Changes?", json!({"title": p("title")})),
-            "start" => Dialog::custom("start", "GridCraft", json!({})),
+            "start" => Dialog::custom("start", "Unigreen Sheets", json!({})),
             "comments" => {
                 app.grid.pane = None;
                 app.run_or_alert("review.showComments", json!({"on": true}));
@@ -918,7 +918,7 @@ pub fn show(app: &mut SheetApp, ctx: &egui::Context) {
                 "solverResults" => solver_results(app, ui, &mut d, &mut open),
                 "spelling" => spelling(app, ui, &mut d, &mut open),
                 "agents" => {
-                    ui.label("GridCraft is fully drivable by agents. Every menu item, button and gesture is a command:");
+                    ui.label("Unigreen Sheets is fully drivable by agents. Every menu item, button and gesture is a command:");
                     ui.add_space(4.0);
                     ui.monospace("gridcraft --control 7979        # JSON-lines control channel\ngridcraft-cli mcp --connect 7979   # MCP bridged to this window\ngridcraft-cli mcp                   # headless MCP server");
                     ui.add_space(4.0);
@@ -1223,7 +1223,8 @@ fn paste_special_shortcuts(d: &mut Dialog, ctx: &egui::Context) {
 fn ok_cancel(ui: &mut egui::Ui, confirm: &mut bool, open: &mut bool) {
     ui.add_space(8.0);
     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-        let ok = ui.add(egui::Button::new(egui::RichText::new("   OK   ").color(Color32::WHITE)).fill(crate::theme::Tokens::get(ui.ctx()).accent));
+        let t = crate::theme::Tokens::get(ui.ctx());
+        let ok = ui.add(egui::Button::new(egui::RichText::new("   OK   ").color(t.on_accent())).fill(t.accent));
         if ok.clicked() || ui.input(|i| i.key_pressed(Key::Enter)) {
             *confirm = true;
         }
@@ -1323,10 +1324,11 @@ fn about(ui: &mut egui::Ui, d: &mut Dialog) {
         "Contributors" => crate::credits::contributors_ui(ui),
         "Models" => crate::credits::models_ui(ui),
         _ => {
-            ui.heading("GridCraft");
+            ui.heading("Unigreen Sheets");
             ui.label(format!("Version {}", env!("CARGO_PKG_VERSION")));
             ui.add_space(4.0);
-            ui.label("A clean-room, open-source, Rust-native spreadsheet. Part of ArtCraft.");
+            ui.label("A clean-room, open-source, Rust-native spreadsheet.");
+            ui.label("Unigreen Sheets, based on GridCraft by the ArtCraft team and community.");
             ui.hyperlink_to("getartcraft.com/apps/gridcraft", "https://getartcraft.com/apps/gridcraft");
             ui.hyperlink_to("Join the ArtCraft Discord", "https://discord.gg/artcraft");
         }
@@ -1337,7 +1339,7 @@ fn about(ui: &mut egui::Ui, d: &mut Dialog) {
 /// preserved VBA project. Mirrors Excel's Developer ▸ Macros list, but is honest that VBA is
 /// preserved and not executed.
 fn macros(ui: &mut egui::Ui, d: &mut Dialog) {
-    ui.label("Automation in this workbook. GridCraft runs its own scripts; a file's VBA project is preserved but not executed.");
+    ui.label("Automation in this workbook. Unigreen Sheets runs its own scripts; a file's VBA project is preserved but not executed.");
     ui.add_space(6.0);
     let items: Vec<Json> = d.result.as_ref().and_then(Json::as_array).cloned().unwrap_or_default();
     if items.is_empty() {
@@ -2371,8 +2373,8 @@ fn solver(ui: &mut egui::Ui, d: &mut Dialog, confirm: &mut bool, open: &mut bool
     );
     ui.add_space(8.0);
     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-        let solve =
-            ui.add(egui::Button::new(egui::RichText::new("  Solve  ").color(Color32::WHITE)).fill(crate::theme::Tokens::get(ui.ctx()).accent));
+        let t = crate::theme::Tokens::get(ui.ctx());
+        let solve = ui.add(egui::Button::new(egui::RichText::new("  Solve  ").color(t.on_accent())).fill(t.accent));
         if solve.clicked() && !text(d, "objective").trim().is_empty() {
             *confirm = true;
         }

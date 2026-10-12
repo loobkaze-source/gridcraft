@@ -14,3 +14,7 @@ list (author, source, license) is in ATTRIBUTION.md.
 
 None: every bundled asset is original to GridCraft. Builds made with craft-fonts
 (CRAFT_FONTS_DIR) embed the fonts listed in ATTRIBUTION.md under the SIL Open Font License 1.1.
+
+Unigreen Sheets is a modified version of GridCraft distributed by Unigreen Power Co., Ltd.
+Modifications: product name, app icons, colour theme and packaging metadata. The Unigreen name and
+logo are trademarks of Unigreen Power Co., Ltd. and are not licensed under MIT or Apache-2.0.
